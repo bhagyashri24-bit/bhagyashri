@@ -1,0 +1,36 @@
+import requests
+import mysql.connector as d
+from bs4 import BeautifulSoup
+import smtplib
+
+
+url="https://www.flipkart.com/barbie-soccer-coach-playset/p/itm5b6d8bdd3cbef?pid=DDHFQQSHZMWH9XRG&lid=LSTDDHFQQSHZMWH9XRGJ4TJJR&marketplace=FLIPKART&store=tng&srno=b_1_1&otracker=clp_creative_card_2_13.creativeCard.CREATIVE_CARD_toysclp-store_TSBPX8L3O33E&fm=neo%2Fmerchandising&iid=3ce0413e-c0c2-405c-80f4-fad1c96e1259.DDHFQQSHZMWH9XRG.SEARCH&ppt=clp&ppn=toysclp-store&ssid=fx929p5mhs0000001636290051581"
+r=requests.get(url)
+soup=BeautifulSoup(r.content,"html.parser")
+priceele=soup.find_all("div",class_="_30jeq3 _16Jk6d")
+namep=soup.find_all("span",class_="B_NuCI")
+for i in priceele:
+    prices=i.text
+for i in namep:
+    names=i.text
+print(str(names))
+datab=d.connect(host="localhost",user="root",password="root",database="db")
+mycursor=datab.cursor()
+mycursor.execute("select e_mail from student where id=1")
+result=mycursor.fetchone()
+
+for i in result:
+    r_val=int(input("1=use database email \n 2= use randome email"))
+    if r_val==1:
+        s = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        s.login("bhagyashrigalbale24@gmail.com", "galba")
+        mssg = "hello there new sale is going on \n" + names + "\n" + prices + "\n for more details check out our link\n" + url
+        s.sendmail("bhagyashrigalbale24@gmail.com", i, mssg.encode("utf-8"))
+        s.quit()
+    if r_val==2:
+        to=input("enter the email id")
+        s = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        s.login("bhagyashrigalbale24@gmail.com", "galba")
+        mssg = "hello there new sale is going on \n" + names + "\n" + prices + "\n for more details check out our link\n" + url
+        s.sendmail("bhagyashrigalbale24@gmail.com",to, mssg.encode("utf-8"))
+        s.quit()
